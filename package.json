@@ -6,7 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "node scripts/seed.js",
+    "db:clear": "node -e \"fetch('http://localhost:3000/api/clear', {method: 'POST'})\"",
+    "db:studio": "prisma studio",
+    "deploy:prepare": "prisma generate && prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
