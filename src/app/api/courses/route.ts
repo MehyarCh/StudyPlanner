@@ -49,6 +49,20 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
+    console.log('🔍 Starting GET /api/courses')
+    console.log('NODE_ENV:', process.env.NODE_ENV)
+    console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL)
+    
+    if (!process.env.DATABASE_URL) {
+      console.error('❌ DATABASE_URL is not set')
+      return NextResponse.json(
+        { error: 'Database URL not configured' },
+        { status: 500 }
+      )
+    }
+
+    console.log('✅ DATABASE_URL is set, attempting database connection...')
+    
     const courses = await prisma.course.findMany({
       include: {
         documents: true,
@@ -59,11 +73,17 @@ export async function GET() {
       },
     })
 
+    console.log('✅ Successfully fetched courses:', courses.length)
     return NextResponse.json(courses)
   } catch (error) {
-    console.error('Error fetching courses:', error)
+    console.error('❌ Error fetching courses:', error)
+    console.error('❌ Error details:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    })
     return NextResponse.json(
-      { error: 'Failed to fetch courses' },
+      { error: 'Failed to fetch courses', details: error.message },
       { status: 500 }
     )
   }
